@@ -37,7 +37,23 @@ $farmers = array
 );
 
 
+/**
+ * Seeds class.
+ * 
+ *
+ */
 class Seeds {
+
+	/**
+	 * get function.
+	 *
+	 * @access public
+	 * @static
+	 * @param int $json (default: 0)
+	 * @param int $offset (default: 0)
+	 * @param int $num (default: 12)
+	 * @return void
+	 */
 
 	static public function get($json = 0, $offset = 0, $num = 12)
 	{
@@ -58,16 +74,19 @@ class Seeds {
 
 }
 
-/*
-<code>
-foreach ($farmers as $farmer)
-{
-	$f = new Seeds_Feed( $farmer );
-	$f->process();
-}
-</code>
-*/
 
+/**
+ * Seeds_Feed class.
+ *
+ 	 <code>
+		foreach ($farmers as $farmer)
+		{
+			$f = new Seeds_Feed( $farmer );
+			$f->process();
+		}
+	</code>
+ *
+ */
 class Seeds_Feed {
 
 	public  $url;
@@ -76,6 +95,13 @@ class Seeds_Feed {
 	private $quirks = array('tumblr');
 	private $content = '';
 
+	/**
+	 * __construct function.
+	 * 
+	 * @access public
+	 * @param mixed $url
+	 * @return void
+	 */
 	public function __construct($url)
 	{
 		$this->url = $url;
@@ -83,6 +109,12 @@ class Seeds_Feed {
 		$this->content = $seed->get($url);
 	}
 
+	/**
+	 * process function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function process()
 	{
 		if ( is_object( $this->content ) ) {
@@ -93,6 +125,12 @@ class Seeds_Feed {
 		}
 	}
 
+	/**
+	 * parse function.
+	 * 
+	 * @access private
+	 * @return void
+	 */
 	private function parse()
 	{
 		$this->farmer = $this->content->channel->link;
@@ -104,6 +142,13 @@ class Seeds_Feed {
 		}
 	}
 
+	/**
+	 * save_item function.
+	 * 
+	 * @access private
+	 * @param mixed $i
+	 * @return void
+	 */
 	private function save_item($i)
 	{
 		$sql = array(
@@ -131,7 +176,15 @@ class Seeds_Feed {
 	}
 
 
-	//try to figure out a main pix
+	/**
+	 * pix_scan function.
+	 *
+	 * try to figure out a main pix
+	 * 
+	 * @access private
+	 * @param mixed $item
+	 * @return void
+	 */
 	private function pix_scan($item)
 	{
 		$img = '';
@@ -200,8 +253,14 @@ class Seeds_Feed {
 			return $img ;
 
 	}
-
-	//find avg posts per month - yes, ignoring 0 months for now
+	
+	/**
+	 * find_ppm function: 
+	 * find avg posts per month - yes, ignoring 0 months for now
+	 * 
+	 * @access private
+	 * @return void
+	 */
 	private function find_ppm()
 	{
 		$sql = sprintf("SELECT count(guid) as count FROM seeds WHERE farmer='%s' GROUP BY MONTH(FROM_UNIXTIME(posted))",$this->farmer) ;
@@ -224,6 +283,13 @@ class Seeds_Feed {
 	//set weight based on avg posts p month
 	private function set_weight(){}
 
+	/**
+	 * save_channel function.
+	 * 
+	 * @access private
+	 * @param mixed $c
+	 * @return void
+	 */
 	private function save_channel($c)
 	{
 
@@ -242,6 +308,13 @@ class Seeds_Feed {
 		Seeds_Utils::prepped($sql);
 	}
 
+	/**
+	 * gc function.
+	 * 
+	 * @access public
+	 * @static
+	 * @return void
+	 */
 	public static function gc()
 	{
 		Seeds_Utils::query("DELETE FROM seeds WHERE posted < DATE_SUB(CURDATE(),INTERVAL 1 YEAR)");
@@ -249,7 +322,19 @@ class Seeds_Feed {
 
 }
 
+/**
+ * Seeds_Utils class.
+ */
 class Seeds_Utils {
+
+	/**
+	 * prepped function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param array $sql
+	 * @return void
+	 */
 	static function prepped(array $sql)
 	{
 		$db = Seeds_Database::getInstance();
@@ -257,12 +342,28 @@ class Seeds_Utils {
 		return $p->execute($sql['p']);
 	}
 
+	/**
+	 * query function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $sql
+	 * @return void
+	 */
 	static function query($sql)
 	{
 		$db = Seeds_Database::getInstance();
 		return $db->query($sql);
 	}
 
+	/**
+	 * get_all function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $sql
+	 * @return void
+	 */
 	static function get_all($sql)
 	{
 		$db = Seeds_Database::getInstance();
@@ -271,6 +372,14 @@ class Seeds_Utils {
 			return $res->fetchAll(PDO::FETCH_ASSOC);
 	}
 
+	/**
+	 * cleaner function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $text
+	 * @return void
+	 */
 	static function cleaner($text)
 	{
 		$text = preg_replace("/<script[^>]*>.*?< *script[^>]*>/i", "", $text);
@@ -313,6 +422,14 @@ class Seeds_Utils {
     }
 
 
+	/**
+	 * resolve_link function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $url
+	 * @return void
+	 */
 	static function resolve_link($url)
 	{
 		$ch = curl_init();
@@ -327,6 +444,13 @@ class Seeds_Utils {
 		return self::remove_queryString($l);
 	}
 
+	/**
+	 * remove_queryString function.
+	 * 
+	 * @access private
+	 * @param mixed $url
+	 * @return void
+	 */
 	private function remove_queryString($url)
 	{
 		$u = explode('?',$url,-1);
@@ -337,10 +461,20 @@ class Seeds_Utils {
 }
 
 
+/**
+ * Seeds_Database class.
+ * Database Singleton
+ */
 class Seeds_Database {
 	private static $instance=NULL;
 	private $dbh;
 
+	/**
+	 * __construct function.
+	 * 
+	 * @access private
+	 * @return void
+	 */
 	private function __construct()
 	{
 		global $db;
@@ -356,6 +490,13 @@ class Seeds_Database {
 		}
 	}
 
+	/**
+	 * getInstance function.
+	 * 
+	 * @access public
+	 * @static
+	 * @return void
+	 */
 	public static function getInstance()
 	{
 		if (!self::$instance) {
@@ -365,6 +506,13 @@ class Seeds_Database {
 		return self::$instance;
 	}
 
+	/**
+	 * prepare function.
+	 * 
+	 * @access public
+	 * @param mixed $sql
+	 * @return void
+	 */
 	public function prepare($sql)
 	{
 		try
@@ -378,6 +526,13 @@ class Seeds_Database {
 
 	}
 
+	/**
+	 * query function.
+	 * 
+	 * @access public
+	 * @param mixed $sql
+	 * @return void
+	 */
 	public function query($sql)
 	{
 		try
@@ -391,6 +546,13 @@ class Seeds_Database {
 
 	}
 
+	/**
+	 * quote function.
+	 * 
+	 * @access public
+	 * @param mixed $sql
+	 * @return void
+	 */
 	public function quote($sql)
 	{
 		return $this->dbh->quote($sql);
@@ -399,13 +561,35 @@ class Seeds_Database {
 }
 
 
+/**
+ * Abstract Seeds_Fetcher class.
+ * 
+ * @abstract
+ */
 abstract class Seeds_Fetcher {
+
 	private $method;
 
 	public function __construct(){}
 
+	/**
+	 * get function.
+	 * 
+	 * @access public
+	 * @abstract
+	 * @static
+	 * @param mixed $url
+	 * @return void
+	 */
 	abstract static public function get($url);
 
+	/**
+	 * factory function.
+	 * 
+	 * @access public
+	 * @static
+	 * @return void
+	 */
 	public static function factory()
 	{
 		if ( function_exists('simplexml_load_file') ) {
@@ -424,8 +608,21 @@ abstract class Seeds_Fetcher {
 
 }
 
+/**
+ * Seeds_Fetcher_XML class.
+ * 
+ * @extends Seeds_Fetcher
+ */
 class Seeds_Fetcher_XML extends Seeds_Fetcher {
 
+	/**
+	 * get function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $url
+	 * @return void
+	 */
 	public static function get($url)
 	{
 		return simplexml_load_file( urlencode($url) );
@@ -434,8 +631,21 @@ class Seeds_Fetcher_XML extends Seeds_Fetcher {
 }
 
 
+/**
+ * Seeds_Fetcher_File class.
+ * 
+ * @extends Seeds_Fetcher
+ */
 class Seeds_Fetcher_File extends Seeds_Fetcher {
 
+	/**
+	 * get function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $url
+	 * @return void
+	 */
 	public static function get($url)
 	{
 		$content = file_get_contents( urlencode($url) );
@@ -445,14 +655,27 @@ class Seeds_Fetcher_File extends Seeds_Fetcher {
 
 }
 
+/**
+ * Seeds_Fetcher_Curl class.
+ * 
+ * @extends Seeds_Fetcher
+ */
 class Seeds_Fetcher_Curl extends Seeds_Fetcher {
 
+	/**
+	 * get function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $url
+	 * @return void
+	 */
 	public static function get($url)
 	{
 		$ch = curl_init( urlencode($url) );
 
 		curl_setopt($ch, CURLOPT_CRLF, 1); /* avoid issues */
-		curl_setopt($ch, CURLOPT_HEADER, 0); /* turn on for caching */
+		curl_setopt($ch, CURLOPT_HEADER, 0); /* turn on when caching */
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Seedsbot/0.1 (+http://justseeds.com/)');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 

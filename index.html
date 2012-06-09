@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>Seeds</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+	<meta charset="utf-8">
+	<title>Seeds</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-    <link href="/static/css/bootstrap.css" rel="stylesheet">
-    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="/static/css/bootstrap.css" rel="stylesheet">
+	<link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
 
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 
-    <link rel="shortcut icon" href="/static/img/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/img/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/img/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/img/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="/static/img/apple-touch-icon-57-precomposed.png">
+	<link rel="shortcut icon" href="/static/img/favicon.ico">
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/img/apple-touch-icon-144-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/img/apple-touch-icon-114-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/img/apple-touch-icon-72-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" href="/static/img/apple-touch-icon-57-precomposed.png">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="/static/js/jquery.livequery.min.js"></script>
-    <script src="/static/js/jquery.timeago.min.js"></script>
-    <script src="/static/js/jquery.masonry.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="/static/js/jquery.livequery.min.js"></script>
+	<script src="/static/js/jquery.timeago.min.js"></script>
+	<script src="/static/js/jquery.masonry.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
-
-       	function getPosts( offset ) {
-       		if(!offset) var offset = 0;
+		function getPosts( offset ) {
+			if(!offset) var offset = 0;
 
 			$.getJSON('/app/seeds.php',{"o": offset }, function(data) {
 
@@ -85,7 +84,7 @@
 					isAnimated: false
 				});
 			});
-			
+
 		});
 
 		//get first batch
@@ -94,25 +93,25 @@
 		//e-z infinite scroll
 		var offset = 12;
 		$(window).scroll(function() {
-            if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-               getPosts(offset);
-               offset = offset + 12;
-            }
+			if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+				getPosts(offset);
+				offset = offset + 12;
+			}
 
 		});
 
 	});
-   	</script>
-  	</head>
-  	<body>
+	</script>
+	</head>
+	<body>
 
-    <div class="container-fluid">
+	<div class="container-fluid">
 
-      <h1>Recent Seeds</h1>
+		<h1>Recent Seeds</h1>
 
-      <div id="posts"><ul class="thumbnails"></ul></div>
+		<div id="posts"><ul class="thumbnails"></ul></div>
 
-    </div>
+	</div>
 
 	</body>
 
