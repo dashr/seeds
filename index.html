@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Seeds</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="shortcut icon" href="/static/img/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/img/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/img/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/img/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/static/img/apple-touch-icon-57-precomposed.png">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="/static/js/jquery.livequery.min.js"></script>
+    <script src="/static/js/jquery.timeago.min.js"></script>
+    <script src="/static/js/jquery.masonry.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+
+       	function getPosts( offset ) {
+       		if(!offset) var offset = 0;
+
+			$.getJSON('/app/seeds.php',{"o": offset }, function(data) {
+
+				var items = [];
+
+				$.each(data, function(key, post) {
+					post.time = new Date(post.posted * 1000);
+
+					items.push
+					(
+					 	'<li class="span4"><div class="thumbnail">'
+					 +	'<a href="'+ post.link +'"><h4>' + post.title + '</h4></a>'
+					 +	getImage(post)
+					 +	'<p><time class="timeago" datetime="'+ post.time.toISOString() +'">'+ post.time.toISOString() +'</time></p>'
+					 +	'<div>'
+					 +	'<a class="btn" href="'+ post.farmer +'"><i class="icon-home"></i></a>'
+					 +	'<a class="btn" href="'+ post.link   +'"><i class="icon-leaf"></i></a>'
+					 +	'</div>'
+					 +	'</div></li>'
+					);
+
+				});
+
+				var html = items.join('');
+
+				if (offset == 0) {
+					$('#posts ul').append( html );
+				}
+				else
+				{
+					var $html = $( html );
+					$('.thumbnails').append( $html ).masonry( 'appended', $html, true );
+				}
+
+			});
+
+			return false;
+		}
+
+		function getImage(post) {
+			if (post.image != null) {
+				return '<a href="'+ post.link +'"><img src="'+ post.image + '" alt="'+ post.title +'" /></a>';
+			}
+		}
+
+		$('time').livequery(function() {
+			$(this).timeago();
+
+			var $container = $('.thumbnails');
+
+			$container.imagesLoaded( function(){
+				$container.masonry({
+					itemSelector : '.span4',
+					isAnimated: false
+				});
+			});
+			
+		});
+
+		//get first batch
+		getPosts();
+
+		//e-z infinite scroll
+		var offset = 12;
+		$(window).scroll(function() {
+            if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+               getPosts(offset);
+               offset = offset + 12;
+            }
+
+		});
+
+	});
+   	</script>
+  	</head>
+  	<body>
+
+    <div class="container-fluid">
+
+      <h1>Recent Seeds</h1>
+
+      <div id="posts"><ul class="thumbnails"></ul></div>
+
+    </div>
+
+	</body>
+
+</html>
