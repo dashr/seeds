@@ -1,4 +1,4 @@
-#Seeds
+-#Seeds
 
 Seeds provides an RSS aggregator, from multiple blog sources and post styles, with a focus on finding and displaying Art images. While many great RSS feed readers exist, we needed a compact drop-in lib that worked easily. It loads recent blog entries, and is not meant to be used as a permament archive.
 
@@ -92,10 +92,10 @@ http://localhost/index.html
 ## Resources
 Seeds uses a few open source libraries on the frontend (all included, license is respective of their owners):
 
-* JQuery Live Query
-* JQuery Masonry
-* JQuery Time Ago
-* Twitter Bootstrap
+* [JQuery Live Query](https://github.com/brandonaaron/livequery)
+* [JQuery Masonry](http://masonry.desandro.com/)
+* [JQuery Time Ago](http://timeago.yarp.com/)
+* [Twitter Bootstrap](http://twitter.github.com/bootstrap/)
 
 
 ## Open Source License
