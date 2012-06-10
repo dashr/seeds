@@ -5,7 +5,7 @@ Seeds provides an RSS aggregator, from multiple blog sources and post styles, wi
 It is still undergoing developement, testing and refactoring before it goes live. It is created and maintained by [jose d lopez](http://tumis.com) of house TUMIS for use by the Just Seeds art collective. [JustSeeds.org](http://JustSeeds.org)
 
 
-## Quick Start
+## Installation
 #####Create a MySQL database with these 2 tables.
 
 ```
@@ -76,6 +76,17 @@ Based on the number of blogs, the blog provider, the number of blog posts, and t
 #   0 */3 * * * /usr/local/bin/php ~/app/cron.php >> /dev/null
 ```
 
+#####Launch the Posts viewer
+```
+http://localhost/index.html
+```
+
+## Requirements
+* PHP 5.2 *(these modules are standard)*
+	* PDO
+	* DOM 
+	* SimpleXmlElement	
+* Apache or Nginx
 
 
 ## Resources
