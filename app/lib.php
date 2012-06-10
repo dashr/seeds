@@ -20,7 +20,7 @@ $db = array
 );
 
 /**
- * Direct URL to RSS/Atom (xml) feeds of Seeders
+ * Direct URL to RSS/Atom (xml) feeds of Farmers
  *
  */
 $farmers = array
@@ -123,6 +123,7 @@ class Seeds_Feed {
 			$this->parse();
 
 			$this->find_ppm();
+
 		}
 	}
 
