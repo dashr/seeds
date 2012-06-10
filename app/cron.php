@@ -1,7 +1,7 @@
 <?php
 #
 #	cronjob: check/update every 3 hours 
-#   0 */3 * * * /usr/local/bin/php ~/cron.php >> /dev/null
+#   0 */3 * * * /usr/local/bin/php ~/app/cron.php >> /dev/null
 #
 
 include_once '../app/lib.php';
@@ -13,3 +13,5 @@ foreach ($farmers as $farmer)
 	$f = new Seeds_Feed( $farmer );
 	$f->process();
 }
+
+Seeds_Feed::gc();
