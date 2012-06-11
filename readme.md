@@ -81,6 +81,12 @@ Based on the number of blogs, the blog provider, the number of blog posts, and t
 http://localhost/index.html
 ```
 
+#####Retrieve the last 12 posts (returns json) 
+```
+http://localhost/seeds.php
+```
+
+
 ## Requirements
 * PHP 5.2 *(these modules are standard)*
 	* PDO
