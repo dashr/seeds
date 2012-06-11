@@ -1,7 +1,7 @@
 <?php
 
 //force local settings
-ini_set( "allow_url_fopen", 1 );
+ini_set('allow_url_fopen', 1 );
 ini_set('default_charset', 'utf-8');
 date_default_timezone_set('America/Los_Angeles');
 error_reporting(E_ALL);
@@ -62,12 +62,12 @@ class Seeds {
 
 		$posts = Seeds_Utils::get_all( $sql );
 
-		if ( $json == 1) 
+		if ( $json == 1)
 		{
 			header('Content-type: application/json');
 			print json_encode( $posts );
 		}
-		else 
+		else
 		{
 			return $posts;
 		}
@@ -118,7 +118,7 @@ class Seeds_Feed {
 	 */
 	public function process()
 	{
-		if ( is_object( $this->content ) ) 
+		if ( is_object( $this->content ) )
 		{
 			$this->parse();
 
@@ -138,7 +138,7 @@ class Seeds_Feed {
 		$this->farmer = $this->content->channel->link;
 		$this->save_channel( $this->content->channel );
 
-		foreach ( $this->content->channel->item as $item ) 
+		foreach ( $this->content->channel->item as $item )
 		{
 			$this->save_item($item);
 		}
@@ -167,11 +167,11 @@ class Seeds_Feed {
 				$i->guid,
 				$this->farmer,
 				$i->link,
-				filter_var($i->title, FILTER_SANITIZE_STRING),
+				filter_var((string) $i->title, FILTER_SANITIZE_STRING),
 				Seeds_Utils::cleaner($i->description),
 				self::pix_scan($i),
 				strtotime( $i->pubDate )
-			
+
 		));
 
 		Seeds_Utils::prepped($sql);
@@ -192,21 +192,21 @@ class Seeds_Feed {
 	{
 		$img = '';
 
-		if ( isset($item->enclosure) ) 
+		if ( isset($item->enclosure) )
 		{
 			$img = (string) $item->enclosure->attributes()->url[0];
 		}
 
 		//most posts have images
 		elseif (isset($this->content->channel->generator) && stristr($this->content->channel->generator, 'tumblr') ||
-			    isset($this->content->channel->generator) && stristr($this->content->channel->generator, 'blogger')	) 
+			    isset($this->content->channel->generator) && stristr($this->content->channel->generator, 'blogger')	)
 		{
 			$dom = new DOMDocument;
 			libxml_use_internal_errors(true);
 			$dom->loadHTML( $item->description );
 			$images = $dom->getElementsByTagName('img');
 
-			if ( is_object($images->item(0)) ) 
+			if ( is_object($images->item(0)) )
 			{
 				$img = $images->item(0)->getAttribute('src');
 			}
@@ -214,17 +214,17 @@ class Seeds_Feed {
 
 		//default to FB friendly images : <meta property="og:image"
 		elseif ( isset($this->content->channel->generator) && stristr($this->content->channel->generator, 'wordpress.com') ||
-			isset($this->content->channel->generator) && stristr($this->content->channel->generator, 'typepad.com') ) 
+			isset($this->content->channel->generator) && stristr($this->content->channel->generator, 'typepad.com') )
 		{
 			$dom = new DOMDocument;
 			libxml_use_internal_errors(true);
 			$dom->loadHTML( file_get_contents( $item->link ) ); //TODO: abstract like fetcher
 			$metas = $dom->getElementsByTagName('meta');
 
-			foreach ($metas as $meta) 
+			foreach ($metas as $meta)
 			{
 				//grab the first and ignore the rest
-				if ( $meta->getAttribute('property') == 'og:image' ) 
+				if ( $meta->getAttribute('property') == 'og:image' )
 				{
 					$img = $meta->getAttribute('content');
 				}
@@ -232,18 +232,18 @@ class Seeds_Feed {
 		}
 
 		//last chance, just git something
-		if ($img == '') 
+		if ($img == '')
 		{
 			$dom = new DOMDocument;
 			libxml_use_internal_errors(true);
 			$dom->loadHTML( file_get_contents( $item->link ) ); //TODO: abstract like fetcher
 			$body = $dom->getElementsByTagName('body');
 
-			foreach ($body as $b) 
+			foreach ($body as $b)
 			{
 				$images = $b->getElementsByTagName('img');
 
-				if ( is_object($images->item(0))) 
+				if ( is_object($images->item(0)))
 				{
 					$img = $images->item(0)->getAttribute('src');
 				}
@@ -271,7 +271,7 @@ class Seeds_Feed {
 
 		$c = 0;
 
-		foreach ($posts as $p) 
+		foreach ($posts as $p)
 		{
 			$c += $p['count'];
 		}
@@ -303,7 +303,7 @@ class Seeds_Feed {
 			",
 			'p' => array(
 				$this->farmer,
-				filter_var($c->title, FILTER_SANITIZE_STRING),
+				filter_var( (string) $c->title, FILTER_SANITIZE_STRING),
 				Seeds_Utils::cleaner($c->description)
 		));
 
@@ -319,7 +319,7 @@ class Seeds_Feed {
 	 */
 	public static function gc()
 	{
-		Seeds_Utils::query("DELETE FROM seeds WHERE posted < DATE_SUB(CURDATE(),INTERVAL 1 YEAR)");
+		Seeds_Utils::query("DELETE FROM seeds WHERE posted < " . strtotime("last Year") );
 	}
 
 }
@@ -594,19 +594,19 @@ abstract class Seeds_Fetcher {
 	 */
 	public static function factory()
 	{
-		if ( function_exists('simplexml_load_file') ) 
+		if ( function_exists('simplexml_load_file') )
 		{
 			return new Seeds_Fetcher_XML();
 		}
-		elseif ( ini_get('allow_url_fopen') === true ) 
+		elseif ( ini_get('allow_url_fopen') === true )
 		{
 			return new Seeds_Fetcher_File();
 		}
-		elseif ( function_exists('curl_init') ) 
+		elseif ( function_exists('curl_init') )
 		{
 			return new Seeds_Fetcher_Curl();
 		}
-		else 
+		else
 		{
 			trigger_error('Seeds requires allow_url_fopen enabled or Curl to be installed', E_ERROR );
 		}
@@ -687,7 +687,7 @@ class Seeds_Fetcher_Curl extends Seeds_Fetcher {
 
 		$content = curl_exec($ch);
 
-		if (curl_errno($ch)) 
+		if (curl_errno($ch))
 		{
 			trigger_error('Curl error:'.  curl_error($ch), E_WARNING );
 		}
